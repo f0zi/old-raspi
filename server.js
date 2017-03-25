@@ -9,12 +9,16 @@ const bodyParser = require('body-parser')
 const urlParser = bodyParser.urlencoded({ extended: true })
 const jsonParser = bodyParser.json()
 
+var settings = require('./package.json')
 const Player = require('./player')
+const Volume = require('./volume')
 var player
 
+var volume = new Volume(settings.volume || {})
+
 const { EventEmitter } = require('events')
-const eventhub = new EventEmitter()
-eventhub.on('meta', update => {
+const dispatch = new EventEmitter()
+dispatch.on('meta', update => {
   console.log('Update: ', update)
 })
 
@@ -28,14 +32,14 @@ app.get("/", function (request, response) {
   response.sendFile(__dirname + '/views/index.html');
 });
 
-app.post("/play", function(request, response) {
+app.post("/v1/play", function(request, response) {
   if(player) player.stop()
   if(request.body.url) {
     player = new Player({
       url: request.body.url
     })
     player.on('meta', update => {
-      eventhub.emit('meta', update)
+      dispatch.emit('meta', update)
     })
   }
   if(player) {
@@ -46,22 +50,35 @@ app.post("/play", function(request, response) {
   }
 })
 
-app.post("/stop", function(request, response) {
+app.post("/v1/stop", function(request, response) {
   if(player) player.stop()
   response.sendStatus(200)
 })
 
-app.get("/nowplaying", function(request, response) {
+app.get("/v1/nowplaying", function(request, response) {
   if(player) response.send(player.nowPlaying())
   else response.send({ playing: false })
 })
 
-app.get("/subscribe", function(request, response) {
-  response.set('Content-Type', 'text/plain;charset=utf-8');
+app.get("/v1/volume", function(request, response) {
+  response.set('Content-Type', 'application/json;charset=utf-8');
+  response.set('Cache-Control', 'no-cache, must-revalidate');
+
+  volume.getVolume().then(result => {
+    console.log(result)
+    response.send(result)
+  }, error => {
+    console.error(error)
+    response.sendStatus(500)
+  })
+})
+
+app.get("/v1/subscribe", function(request, response) {
+  response.set('Content-Type', 'application/json;charset=utf-8');
   response.set('Cache-Control', 'no-cache, must-revalidate');
 
   //console.log("Subscription...")
-  eventhub.once('meta', nowplaying => {
+  dispatch.once('meta', nowplaying => {
     console.log("Response")
     response.send(nowplaying)
   })

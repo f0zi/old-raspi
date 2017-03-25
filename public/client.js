@@ -18,7 +18,7 @@ function poll(xhr, status) {
   }
 
   $.ajax({
-    url:'/subscribe',
+    url:'/v1/subscribe',
     success: nowplaying,
     dataType: 'json',
     complete: poll
@@ -28,18 +28,14 @@ function poll(xhr, status) {
 $(function() {
   console.log('hello world :o');
   
-  $.get('/nowplaying', nowplaying);
+  $.get('/v1/nowplaying', nowplaying);
   
   poll()
 
   $('form').submit(function(event) {
     event.preventDefault();
-    var dream = $('input').val();
-    $.post('/dreams?' + $.param({dream: dream}), function() {
-      $('<li></li>').text(dream).appendTo('ul#dreams');
-      $('input').val('');
-      $('input').focus();
-    });
+    var url = $('input').val();
+    $.post('/v1/play');
   });
 
 });
