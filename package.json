@@ -1,0 +1,28 @@
+{
+	"name": "old-raspi-music",
+	"version": "0.0.1",
+	"description": "Plays music on the old raspberry pi",
+	"main": "server.js",
+	"scripts": {
+		"start": "node server.js"
+	},
+	"dependencies": {
+		"express": "^4.15.2",
+		"body-parser": "^1.17.1",
+		"yargs": "^7.1.0"
+	},
+	"engines": {
+		"node": "4.4.5"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/f0zi/old-raspi"
+	},
+	"keywords": [
+		"node",
+		"hyperdev",
+		"glitch",
+		"express"
+	],
+	"license": "MIT"
+}

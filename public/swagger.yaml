@@ -1,0 +1,93 @@
+---
+swagger: '2.0'
+info:
+  version: 0.0.1
+  title: Old Raspberry Pi Music Player API
+  description: The old Raspberry Pi 2 Model B is hooked up to the network and a speaker, running a DLNA Renderer software and this API to play music.
+host: oldraspi
+basePath: /v1
+consumes: 
+  - "application/json"
+  - "application/x-www-form-urlencoded"
+  - "multipart/form-data"
+produces:
+  - application/json
+paths:
+  /volume:
+    get:
+      description: Returns the current volume
+      responses:
+        200:
+          description: Current volume
+          schema:
+            $ref: '#/definitions/volume'
+    put:
+      parameters:
+      - name: body
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/volume'
+      responses:
+        201:
+          description: Volume set
+  /volume/togglemute:
+    post:
+      responses:
+        201:
+          description: Mute was toggled
+  /volume/increase:
+    post:
+      responses:
+        201:
+          description: Volume increased
+  /play:
+    post:
+      parameters:
+        - name: body
+          in: body
+          schema:
+            $ref: '#/definitions/stream'
+      responses:
+        201:
+          description: OK
+  /stop:
+    post:
+      responses:
+        201:
+          description: OK
+  /pause:
+    post:
+      responses:
+        201:
+          description: OK
+  /unpause:
+    post:
+      responses:
+        201:
+          description: OK
+  /nowplaying:
+    get:
+      responses:
+        200:
+          description: OK
+definitions:
+  volume:
+    type: object
+    properties:
+      volume:
+        type: number
+      min:
+        type: number
+      max:
+        type: number
+      unit:
+        type: string
+      mute:
+        type: boolean
+  stream:
+    type: object
+    properties:
+      url:
+        type: string
+        format: URL
