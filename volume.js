@@ -14,9 +14,11 @@ class Volume extends EventEmitter {
       var result = {}
       var amixer = spawn('amixer')
       amixer.stdout.on('data', function(data) {
-        var line = data.toString('utf8').match(/^\s*(.+?)\s*:\s*(.*)\s*$/)
-        if(line) {
-          result[line[1]] = line[2]
+        for(var line of data.toString('binary').split('\n')) {
+          var match = line.toString('utf8').match(/^\s*(.+?)\s*:\s*(.*)\s*$/)
+          if(match) {
+            result[match[1]] = match[2]
+          }
         }
       })
       

@@ -1,0 +1,15 @@
+[Unit]
+Description=Old-Raspi media player service
+
+[Service]
+ExecStart=/usr/local/bin/node /home/pi/old-raspi/server.js --quiet
+WorkingDirectory=/home/pi/old-raspi
+Restart=always
+RestartSec=10
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=old-raspi
+Environment=NODE_ENV=production PORT=80
+
+[Install]
+WantedBy=multi-user.target
